@@ -250,12 +250,12 @@ NameVirtualHost *:443
 	ProxyPassReverse /las	ajp://localhost:8223/las
 
 	WSGIDaemonProcess demo user=apache group=apache threads=5
-	WSGIScriptAlias /api/demo /opt/esgf/flaskdemo/demo/demo.wsgi
-	<Directory /opt/esgf/flaskdemo/demo>
-		Order allow,deny
-		Allow from all
-		AllowOverride None
-	</Directory>
+	#WSGIScriptAlias /api/demo /opt/esgf/flaskdemo/demo/demo.wsgi
+	#<Directory /opt/esgf/flaskdemo/demo>
+	#	Order allow,deny
+	#	Allow from all
+	#	AllowOverride None
+	#</Directory>
 
         WSGIDaemonProcess cog-site python-path=/usr/local/cog/venv/lib/python2.7/site-packages:/usr/local/cog/cog-install user=apache group=apache threads=25
         WSGIScriptAlias / /usr/local/cog/cog_install/apache/wsgi.py
