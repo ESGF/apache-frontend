@@ -165,6 +165,10 @@ NameVirtualHost *:80
 	Deny from All
 	#insert-permitted-ips-here
 </Location>
+<Location /solr/*/update>
+        Order deny,allow
+        Deny from All
+</Location>
 <VirtualHost *:80>
 
     # redirect all requests from HTTP to HTTPS
