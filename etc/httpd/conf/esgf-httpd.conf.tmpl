@@ -228,6 +228,9 @@ NameVirtualHost *:443
 	SSLCertificateKeyFile /etc/certs/hostkey.pem
 	SSLCertificateChainFile /etc/certs/cachain.pem
 	SSLOptions +StdEnvVars +ExportCertData
+
+        # security headers
+        Header always set Strict-Transport-Security "max-age=31557600; includeSubdomains;"
 	
 	#add local configuration, if any,  to /etc/httpd/conf/esgf-httpd-locals.conf (without virtualhost directive) and uncomment following line. For http, the file is esgf-httpd-local.conf (locals for https, local for http)
 	#Include /etc/httpd/conf/esgf-httpd-locals.conf
