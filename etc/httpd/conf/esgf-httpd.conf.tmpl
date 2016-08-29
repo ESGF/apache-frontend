@@ -231,6 +231,7 @@ NameVirtualHost *:443
 
         # security headers
         Header always set Strict-Transport-Security "max-age=31557600; includeSubdomains;"
+        Header always set X-Content-Type-Options nosniff
 	
 	#add local configuration, if any,  to /etc/httpd/conf/esgf-httpd-locals.conf (without virtualhost directive) and uncomment following line. For http, the file is esgf-httpd-local.conf (locals for https, local for http)
 	#Include /etc/httpd/conf/esgf-httpd-locals.conf
