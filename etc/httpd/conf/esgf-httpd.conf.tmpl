@@ -264,13 +264,26 @@ NameVirtualHost *:443
 	ProxyPass /las	ajp://localhost:8223/las
 	ProxyPassReverse /las	ajp://localhost:8223/las
 
-	WSGIDaemonProcess demo user=apache group=apache threads=5
+#	WSGIDaemonProcess demo user=apache group=apache threads=5
 	#WSGIScriptAlias /api/demo /opt/esgf/flaskdemo/demo/demo.wsgi
 	#<Directory /opt/esgf/flaskdemo/demo>
 	#	Order allow,deny
 	#	Allow from all
 	#	AllowOverride None
 	#</Directory>
+
+	WSGIDaemonProcess esgfnm python-path=/opt/esgf/virtual/python/lib/python2.7/site-package\
+s:/usr/local/esgf-nodemgr-doc/code/server user=apache group=apache threads=5
+        WSGIScriptAlias /esgf-nm /usr/local/esgf-node-manager/src/python/server/nodemgr/apache/django.wsgi
+        <Directory /usr/local/esgf-nodemgr-doc/code/server/nodemgr/apache>
+		Order allow,deny
+                Allow from all
+                AllowOverride None
+        </Directory>
+        <Location /esgf-nm>
+                WSGIProcessGroup esgfnm
+                WSGIApplicationGroup %{GLOBAL}
+        </Location>
 
         WSGIDaemonProcess cog-site python-path=/usr/local/cog/venv/lib/python2.7/site-packages:/usr/local/cog/cog-install user=apache group=apache threads=25
         WSGIScriptAlias / /usr/local/cog/cog_install/apache/wsgi.py
