@@ -204,20 +204,6 @@ NameVirtualHost *:443
 	SSLOptions +StdEnvVars +ExportCertData
 
 
-	WSGIDaemonProcess esgfnm python-path=/opt/esgf/virtual/python/lib/python2.7/site-package\
-s:/usr/local/esgf-nodemgr-doc/code/server user=apache group=apache threads=5
-    WSGIScriptAlias /esgf-nm /usr/local/esgf-node-manager/src/python/server/nodemgr/apache/django.wsgi
-    <Directory /usr/local/esgf-nodemgr-doc/code/server/nodemgr/apache>
-		Order allow,deny
-        Allow from all
-        AllowOverride None
-    </Directory>
-    <Location /esgf-nm>
-        WSGIProcessGroup esgfnm
-        WSGIApplicationGroup %{GLOBAL}
-    </Location>
-
-
 
      # add all the SSL_* you need in the internal web application
      RequestHeader set SSL_CLIENT_S_DN "%{SSL_CLIENT_S_DN}s"
