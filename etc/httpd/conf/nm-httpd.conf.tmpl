@@ -169,17 +169,6 @@ NameVirtualHost *:80
 
     SSLProxyEngine On
 
-    WSGIDaemonProcess esgfnm python-path=/opt/esgf/virtual/python/lib/python2.7/site-packages:/usr/local/esgf-nodemgr-doc/code/server user=apache group=apache threads=5
-    WSGIScriptAlias /esgf-nm /usr/local/esgf-nodemgr-doc/code/server/nodemgr/apache/django.wsgi
-            <Directory /usr/local/esgf-nodemgr-doc/code/server/nodemgr/apache>
-                Order allow,deny
-                Allow from all
-                AllowOverride None
-        </Directory>
-        <Location /esgf-nm>
-                WSGIProcessGroup esgfnm
-                WSGIApplicationGroup %{GLOBAL}
-                </Location>
 
 </VirtualHost>
 
@@ -205,7 +194,7 @@ NameVirtualHost *:443
 
 	WSGIDaemonProcess esgfnm python-path=/opt/esgf/virtual/python/lib/python2.7/site-package\
 s:/usr/local/esgf-nodemgr-doc/code/server user=apache group=apache threads=5
-    WSGIScriptAlias /esgf-nm /usr/local/esgf-node-manager/src/python/server/nodemgr/apache/django.wsgi
+    WSGIScriptAlias /esgf-nm /usr/local/esgf-node-manager/src/python/server/nodemgr/apache/wsgi.py
     <Directory /usr/local/esgf-nodemgr-doc/code/server/nodemgr/apache>
 		Order allow,deny
         Allow from all
