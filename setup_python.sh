@@ -31,10 +31,11 @@ custominstall_pip(){
 	mkdir -p tempbuildDIR;
 	cd tempbuildDIR;
 	rm -rf /root/.cache/pip;
-	wget --no-check-certificate https://bootstrap.pypa.io/ez_setup.py;
-	EZ=`dirname $PYTHON`/easy_install;
-	$PYTHON ez_setup.py --insecure
-	$EZ pip
+
+	wget --no-check-certificate https://bootstrap.pypa.io/get_pip.py;
+
+	$PYTHON get_pip.py
+
 	PIP=`dirname $PYTHON`/pip
 }
 
