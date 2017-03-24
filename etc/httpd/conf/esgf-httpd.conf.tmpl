@@ -165,6 +165,10 @@ NameVirtualHost *:80
 	Deny from All
 	#insert-permitted-ips-here
 </Location>
+<Location /solr/*/update>
+        Order deny,allow
+        Deny from All
+</Location>
 <VirtualHost *:80>
 
     # redirect all requests from HTTP to HTTPS
@@ -224,6 +228,10 @@ NameVirtualHost *:443
 	SSLCertificateKeyFile /etc/certs/hostkey.pem
 	SSLCertificateChainFile /etc/certs/cachain.pem
 	SSLOptions +StdEnvVars +ExportCertData
+
+        # security headers
+        Header always set Strict-Transport-Security "max-age=31557600; includeSubdomains;"
+        Header always set X-Content-Type-Options nosniff
 	
 	#add local configuration, if any,  to /etc/httpd/conf/esgf-httpd-locals.conf (without virtualhost directive) and uncomment following line. For http, the file is esgf-httpd-local.conf (locals for https, local for http)
 	#Include /etc/httpd/conf/esgf-httpd-locals.conf
@@ -250,12 +258,12 @@ NameVirtualHost *:443
 	ProxyPassReverse /las	ajp://localhost:8223/las
 
 	WSGIDaemonProcess demo user=apache group=apache threads=5
-	WSGIScriptAlias /api/demo /opt/esgf/flaskdemo/demo/demo.wsgi
-	<Directory /opt/esgf/flaskdemo/demo>
-		Order allow,deny
-		Allow from all
-		AllowOverride None
-	</Directory>
+	#WSGIScriptAlias /api/demo /opt/esgf/flaskdemo/demo/demo.wsgi
+	#<Directory /opt/esgf/flaskdemo/demo>
+	#	Order allow,deny
+	#	Allow from all
+	#	AllowOverride None
+	#</Directory>
 
         WSGIDaemonProcess cog-site python-path=/usr/local/cog/venv/lib/python2.7/site-packages:/usr/local/cog/cog-install user=apache group=apache threads=25
         WSGIScriptAlias / /usr/local/cog/cog_install/apache/wsgi.py
