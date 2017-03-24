@@ -27,9 +27,11 @@ custominstall_pip(){
 	cd tempbuildDIR;
 	rm -rf /root/.cache/pip;
 
-	wget --no-check-certificate https://bootstrap.pypa.io/get_pip.py;
+	pip_strap="get-pip.py"
 
-	$PYTHON get_pip.py
+	wget --no-check-certificate https://bootstrap.pypa.io/${pip_strap}
+
+	$PYTHON ${pip_strap}
 
 	PIP=`dirname $PYTHON`/pip
 }
