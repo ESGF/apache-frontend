@@ -149,7 +149,7 @@ TraceEnable Off
 
 WSGISocketPrefix run/wsgi
 
-#  ESGF-HTTPD-CONF VERSION: 1.0.6
+#  ESGF-HTTPD-CONF VERSION: 1.0.7
 
 NameVirtualHost *:80
 <Location / >
@@ -278,9 +278,18 @@ NameVirtualHost *:443
        WSGIApplicationGroup %{GLOBAL}
     </Location>
 
-    #WSGIDaemonProcess esgf-slcs python-path=/opt/esgf/virtual/python/lib/python2.7/site-packages:/usr/local/esgf-node-manager/src/python/server user=apache group=apache threads=5
-    #WSGIScriptAlias /esgf-slcs /usr/local/esgf-node-manager/src/python/server/nodemgr/apache/wsgi.py
-
+   WSGIDaemonProcess esgfslcs python-path=/usr/local/esgf-slcs-server/venv/lib/python2.7/site-packages:/usr/local/esgf-slcs-server/src/esgf_slcs_server user=apache group=apache threads=5
+    WSGIScriptAlias /esgf-slcs /usr/local/esgf-slcs-server/src/esgf_slcs_server/esgf_slcs_server/wsgi.py
+    <Directory /usr/local/esgf-slcs-server/src/esgf_slcs_server/esgf_slcs_server>
+                Order allow,deny
+                Allow from all
+                AllowOverride None
+    </Directory>
+    <Location /esgf-slcs>
+       WSGIProcessGroup esgfslcs
+       WSGIApplicationGroup %{GLOBAL}
+    </Location>
+    
         WSGIDaemonProcess cog-site python-path=/usr/local/cog/venv/lib/python2.7/site-packages:/usr/local/cog/cog-install user=apache group=apache threads=25
         WSGIScriptAlias / /usr/local/cog/cog_install/apache/wsgi.py
         Alias /static/ /usr/local/cog/cog_install/static/
