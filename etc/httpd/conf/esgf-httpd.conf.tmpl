@@ -148,6 +148,9 @@ SSLCryptoDevice builtin
 TraceEnable Off
 
 WSGISocketPrefix run/wsgi
+
+#  ESGF-HTTPD-CONF VERSION: 1.0.7
+
 NameVirtualHost *:80
 <Location / >
 	<LimitExcept POST GET>
@@ -255,7 +258,7 @@ NameVirtualHost *:443
 	ProxyPassReverse /esgf-stats-api	ajp://localhost:8223/esgf-stats-api
 
 
-	WSGIDaemonProcess demo user=apache group=apache threads=5
+	#WSGIDaemonProcess demo user=apache group=apache threads=5
 	#WSGIScriptAlias /api/demo /opt/esgf/flaskdemo/demo/demo.wsgi
 	#<Directory /opt/esgf/flaskdemo/demo>
 	#	Order allow,deny
@@ -263,6 +266,30 @@ NameVirtualHost *:443
 	#	AllowOverride None
 	#</Directory>
 
+    WSGIDaemonProcess esgfnm python-path=/opt/esgf/virtual/python/lib/python2.7/site-packages:/usr/local/esgf-node-manager/src/python/server user=apache group=apache threads=5
+    WSGIScriptAlias /esgf-nm /usr/local/esgf-node-manager/src/python/server/nodemgr/apache/wsgi.py
+    <Directory /usr/local/esgf-node-manager/src/python/server/nodemgr/apache> 
+                Order allow,deny
+                Allow from all
+                AllowOverride None
+    </Directory>
+    <Location /esgf-nm>
+       WSGIProcessGroup esgfnm
+       WSGIApplicationGroup %{GLOBAL}
+    </Location>
+
+   WSGIDaemonProcess esgfslcs python-path=/usr/local/esgf-slcs-server/venv/lib/python2.7/site-packages:/usr/local/esgf-slcs-server/src/esgf_slcs_server user=apache group=apache threads=5
+    WSGIScriptAlias /esgf-slcs /usr/local/esgf-slcs-server/src/esgf_slcs_server/esgf_slcs_server/wsgi.py
+    <Directory /usr/local/esgf-slcs-server/src/esgf_slcs_server/esgf_slcs_server>
+                Order allow,deny
+                Allow from all
+                AllowOverride None
+    </Directory>
+    <Location /esgf-slcs>
+       WSGIProcessGroup esgfslcs
+       WSGIApplicationGroup %{GLOBAL}
+    </Location>
+    
         WSGIDaemonProcess cog-site python-path=/usr/local/cog/venv/lib/python2.7/site-packages:/usr/local/cog/cog-install user=apache group=apache threads=25
         WSGIScriptAlias / /usr/local/cog/cog_install/apache/wsgi.py
         Alias /static/ /usr/local/cog/cog_install/static/
