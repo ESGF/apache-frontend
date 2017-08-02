@@ -149,7 +149,7 @@ TraceEnable Off
 
 WSGISocketPrefix run/wsgi
 
-#  ESGF-HTTPD-CONF VERSION: 1.0.7
+#  ESGF-HTTPD-CONF VERSION: 1.0.8
 
 NameVirtualHost *:80
 <Location / >
@@ -280,6 +280,7 @@ NameVirtualHost *:443
 
    WSGIDaemonProcess esgfslcs python-path=/usr/local/esgf-slcs-server/venv/lib/python2.7/site-packages:/usr/local/esgf-slcs-server/src/esgf_slcs_server user=apache group=apache threads=5
     WSGIScriptAlias /esgf-slcs /usr/local/esgf-slcs-server/src/esgf_slcs_server/esgf_slcs_server/wsgi.py
+    WSGIPassAuthorization On
     <Directory /usr/local/esgf-slcs-server/src/esgf_slcs_server/esgf_slcs_server>
                 Order allow,deny
                 Allow from all
