@@ -25,16 +25,31 @@ Listen 80
 LoadModule auth_basic_module modules/mod_auth_basic.so
 LoadModule auth_digest_module modules/mod_auth_digest.so
 LoadModule authn_file_module modules/mod_authn_file.so
-LoadModule authn_alias_module modules/mod_authn_alias.so
+<IfModule !mod_authz_core.c>
+	# Apache 2.2
+	LoadModule authn_alias_module modules/mod_authn_alias.so
+	LoadModule authn_default_module modules/mod_authn_default.so
+	LoadModule authz_default_module modules/mod_authz_default.so
+	LoadModule disk_cache_module modules/mod_disk_cache.so
+</IfModule>
+<IfModule mod_authz_core.c>
+	# Apache 2.4
+	LoadModule authn_core_module modules/mod_authn_core.so
+	LoadModule cache_disk_module modules/mod_cache_disk.so
+
+	LoadModule mpm_worker_module modules/mod_mpm_worker.so
+	LoadModule unixd_module modules/mod_unixd.so
+	LoadModule socache_shmcb_module modules/mod_socache_shmcb.so
+	LoadModule authz_core_module modules/mod_authz_core.so
+	LoadModule slotmem_shm_module modules/mod_slotmem_shm.so
+</IfModule>
 LoadModule authn_anon_module modules/mod_authn_anon.so
 LoadModule authn_dbm_module modules/mod_authn_dbm.so
-LoadModule authn_default_module modules/mod_authn_default.so
 LoadModule authz_host_module modules/mod_authz_host.so
 LoadModule authz_user_module modules/mod_authz_user.so
 LoadModule authz_owner_module modules/mod_authz_owner.so
 LoadModule authz_groupfile_module modules/mod_authz_groupfile.so
 LoadModule authz_dbm_module modules/mod_authz_dbm.so
-LoadModule authz_default_module modules/mod_authz_default.so
 LoadModule ldap_module modules/mod_ldap.so
 LoadModule authnz_ldap_module modules/mod_authnz_ldap.so
 LoadModule include_module modules/mod_include.so
@@ -71,7 +86,7 @@ LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
 LoadModule proxy_connect_module modules/mod_proxy_connect.so
 LoadModule cache_module modules/mod_cache.so
 LoadModule suexec_module modules/mod_suexec.so
-LoadModule disk_cache_module modules/mod_disk_cache.so
+
 LoadModule cgi_module modules/mod_cgi.so
 LoadModule version_module modules/mod_version.so
 LoadModule wsgi_module placeholder_so
@@ -141,7 +156,14 @@ ProxyVia Off
 SSLPassPhraseDialog  builtin
 SSLSessionCache         shmcb:/var/cache/mod_ssl/scache(512000)
 SSLSessionCacheTimeout  300
-SSLMutex default
+<IfModule !mod_authz_core.c>
+	# Apache 2.2
+	SSLMutex default
+</IfModule>
+<IfModule mod_authz_core.c>
+	# Apache 2.4
+	Mutex default
+</IfModule>
 SSLRandomSeed startup file:/dev/urandom  256
 SSLRandomSeed connect builtin
 SSLCryptoDevice builtin
@@ -151,26 +173,65 @@ WSGISocketPrefix run/wsgi
 
 #  ESGF-HTTPD-CONF VERSION: 1.0.8
 
-NameVirtualHost *:80
+<IfModule !mod_authz_core.c>
+	# Apache 2.2
+	NameVirtualHost *:80
+</IfModule>
 <Location / >
 	<LimitExcept POST GET>
-		Order deny,allow
-		Deny from all
+		<IfModule !mod_authz_core.c>
+			# Apache 2.2
+			Order deny,allow
+			Deny from all
+		</IfModule>
+		<IfModule mod_authz_core.c>
+			# Apache 2.4
+			<RequireAny>
+				Require all denied
+			</RequireAny>
+		</IfModule>
 	</LimitExcept>
 </Location>
 <Location /admin>
-	Order deny,allow
-	Deny from All
+	<IfModule !mod_authz_core.c>
+		# Apache 2.2
+		Order deny,allow
+		Deny from all
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		# Apache 2.4
+		<RequireAny>
+			Require all denied
+		</RequireAny>
+	</IfModule>
 	#insert-permitted-ips-here
 </Location>
 <Location /solr/admin>
-	Order deny,allow
-	Deny from All
+	<IfModule !mod_authz_core.c>
+		# Apache 2.2
+		Order deny,allow
+		Deny from all
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		# Apache 2.4
+		<RequireAny>
+			Require all denied
+		</RequireAny>
+	</IfModule>
 	#insert-permitted-ips-here
 </Location>
 <Location /solr/*/update>
-        Order deny,allow
-        Deny from All
+	<IfModule !mod_authz_core.c>
+		# Apache 2.2
+		Order deny,allow
+		Deny from all
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		# Apache 2.4
+		<RequireAny>
+			Require all denied
+		</RequireAny>
+	</IfModule>
 </Location>
 <VirtualHost *:80>
 
@@ -214,7 +275,10 @@ NameVirtualHost *:80
 
 Listen 443
 LoadModule ssl_module modules/mod_ssl.so
-NameVirtualHost *:443
+<IfModule !mod_authz_core.c>
+	# Apache 2.2
+	NameVirtualHost *:443
+</IfModule>
 <VirtualHost *:443>
 	SSLEngine on
 	SSLProxyEngine On
@@ -269,9 +333,18 @@ NameVirtualHost *:443
     WSGIDaemonProcess esgfnm python-path=/opt/esgf/virtual/python/lib/python2.7/site-packages:/usr/local/esgf-node-manager/src/python/server user=apache group=apache threads=5
     WSGIScriptAlias /esgf-nm /usr/local/esgf-node-manager/src/python/server/nodemgr/apache/wsgi.py
     <Directory /usr/local/esgf-node-manager/src/python/server/nodemgr/apache> 
-                Order allow,deny
+	<IfModule !mod_authz_core.c>
+		# Apache 2.2
+		Order allow,deny
                 Allow from all
-                AllowOverride None
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		# Apache 2.4
+		<RequireAny>
+			Require all granted
+		</RequireAny>
+	</IfModule>
+        AllowOverride None
     </Directory>
     <Location /esgf-nm>
        WSGIProcessGroup esgfnm
@@ -282,9 +355,18 @@ NameVirtualHost *:443
     WSGIScriptAlias /esgf-slcs /usr/local/esgf-slcs-server/src/esgf_slcs_server/esgf_slcs_server/wsgi.py
     WSGIPassAuthorization On
     <Directory /usr/local/esgf-slcs-server/src/esgf_slcs_server/esgf_slcs_server>
-                Order allow,deny
+	<IfModule !mod_authz_core.c>
+		# Apache 2.2
+		Order allow,deny
                 Allow from all
-                AllowOverride None
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		# Apache 2.4
+		<RequireAny>
+			Require all granted
+		</RequireAny>
+	</IfModule>
+        AllowOverride None
     </Directory>
     <Location /esgf-slcs>
        WSGIProcessGroup esgfslcs
@@ -296,15 +378,33 @@ NameVirtualHost *:443
         Alias /static/ /usr/local/cog/cog_install/static/
         <Directory /usr/local/cog/cog_install/static>
                 Options -Indexes
-                Order deny,allow
+ 	<IfModule !mod_authz_core.c>
+		# Apache 2.2
+		Order deny,allow
                 Allow from all
-                AllowOverride None
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		# Apache 2.4
+		<RequireAny>
+			Require all granted
+		</RequireAny>
+	</IfModule>
+        AllowOverride None
         </Directory>
         <Directory /usr/local/cog/cog_install/cog/static>
                 Options -Indexes
-                Order deny,allow
+	<IfModule !mod_authz_core.c>
+		# Apache 2.2
+		Order deny,allow
                 Allow from all
-                AllowOverride None
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		# Apache 2.4
+		<RequireAny>
+			Require all granted
+		</RequireAny>
+	</IfModule>
+        AllowOverride None
         </Directory>
 		WSGIProcessGroup cog-site
 		# add all the SSL_* you need in the internal web application
@@ -313,3 +413,7 @@ NameVirtualHost *:443
 		RequestHeader set SSL_SERVER_S_DN_OU "%{SSL_SERVER_S_DN_OU}s"
 		RequestHeader set SSL_CLIENT_VERIFY "%{SSL_CLIENT_VERIFY}s"
 </VirtualHost>
+
+
+########################################################################################
+IncludeOptional vhosts.d/*.conf
