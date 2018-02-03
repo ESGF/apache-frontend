@@ -19,6 +19,8 @@ write_path_to_httpdconf(){
 	#sed -i "s/\(.*\)PATH=placeholderpath\(.*\)/\1PATH=$quotednpath\2/" etc/init.d/esgf-httpd;
 	sed -i "s/\(.*\)LD_LIBRARY_PATH=placeholderldval\(.*\)/\1LD_LIBRARY_PATH=$quotedldpath\2/" etc/init.d/esgf-httpd;
 	sed -i "s/\(.*\)LoadModule wsgi_module placeholder_so\(.*\)/\1LoadModule wsgi_module $quotedwsgipath\2/" etc/httpd/conf/esgf-httpd.conf;
+    cp etc/init.d/ldval.tmpl etc/init.d/ldval
+	sed -i "s/\(.*\)LD_LIBRARY_PATH=placeholderldval\(.*\)/\1LD_LIBRARY_PATH=$quotedldpath\2/" etc/init.d/ldval;
 }
 
 custominstall_pip(){
