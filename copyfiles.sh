@@ -70,8 +70,9 @@ if grep -w 'release 5' /etc/redhat-release >/dev/null; then
 fi
 
 bash setup_python.sh "$esgfpython" "$esgfpip";
-cp etc/init.d/esgf-httpd /etc/init.d/
 cp etc/httpd/conf/esgf-httpd.conf /etc/httpd/conf/
+cp /etc/sysconfig/httpd /etc/sysconfig/httpd-`date +%Y%m%d`;
+cat etc/init.d/ldval >/etc/sysconfig/httpd
 #cp usr/local/tomcat/conf/server.xml /usr/local/tomcat/conf/
 mkdir -p /etc/certs
 mkdir -p /opt/esgf/flaskdemo/demo
