@@ -60,7 +60,14 @@ sed -i "s/\(.*\)$quotedtmpservername\(.*\)/\1$quotedservername\2/" $tomcatconfdi
 #sed "s/\(.*\)$quotedtmpkeyalias\(.*\)/\1$quotedkeyalias\2/" usr/local/tomcat/conf/2 >usr/local/tomcat/conf/3;
 #sed "s/\(.*\)$quotedtmpkeypass\(.*\)/\1$quotedkeypass\2/" usr/local/tomcat/conf/3 >usr/local/tomcat/conf/server.xml;
 
-sed "s/\(.*\)$quotedtmpservername\(.*\)/\1$quotedservername\2/" etc/httpd/conf/esgf-httpd.conf.tmpl >etc/httpd/conf/esgf-httpd.conf;
+if grep -w 'release 7' /etc/redhat-release >/dev/null; then
+
+	templatefn=etc/httpd/conf/esgf-httpd.conf.7.tmpl
+else
+	templatefn=etc/httpd/conf/esgf-httpd.conf.6.tmpl
+fi
+
+sed "s/\(.*\)$quotedtmpservername\(.*\)/\1$quotedservername\2/" $templatefn >etc/httpd/conf/esgf-httpd.conf;
 if grep -w 'release 5' /etc/redhat-release >/dev/null; then
 	#this is a C5/RHEL5 machine. Adjust httpd conf
 	echo "Adjusted httpd conf for C5/RHEL5";
