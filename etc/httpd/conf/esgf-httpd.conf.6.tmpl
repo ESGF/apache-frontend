@@ -289,6 +289,22 @@ NameVirtualHost *:443
        WSGIProcessGroup esgfslcs
        WSGIApplicationGroup %{GLOBAL}
     </Location>
+
+    WSGIDaemonProcess esgf_auth python-path=/usr/local/esgf-auth:/usr/local/esgf-auth/venv/lib/python2.7/site-packages
+    WSGIScriptAlias /esgf-auth /usr/local/esgf-auth/esgf_auth/wsgi.py process-group=esgf_auth
+    <Directory /usr/local/esgf-authesgf-auth/esgf_auth>
+        <Files wsgi.py>
+            Order allow,deny
+            Allow from all
+        </Files>
+    </Directory>
+    Alias /esgf-auth/static/ /usr/local/esgf-auth/static/
+    <Directory /usr/local/esgf-authesgf-auth/static>
+        Order allow,deny
+        Allow from all
+        AllowOverride None
+    </Directory>
+
     
         WSGIDaemonProcess cog-site python-path=/usr/local/cog/venv/lib/python2.7/site-packages:/usr/local/cog/cog-install user=apache group=apache threads=25
         WSGIScriptAlias / /usr/local/cog/cog_install/apache/wsgi.py
