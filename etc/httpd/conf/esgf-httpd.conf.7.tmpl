@@ -166,15 +166,15 @@ WSGISocketPrefix run/wsgi
 </Location>
 <Location /admin>
 		<RequireAny>
+			#insert-permitted-ips-here
 			Require all denied
 		</RequireAny>
-	#insert-permitted-ips-here
 </Location>
 <Location /solr/admin>
 		<RequireAny>
+			#insert-permitted-ips-here
 			Require all denied
 		</RequireAny>
-	#insert-permitted-ips-here
 </Location>
 <Location /solr/*/update>
 		<RequireAny>
