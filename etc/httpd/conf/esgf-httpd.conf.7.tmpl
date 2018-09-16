@@ -77,7 +77,7 @@ LoadModule proxy_http_module modules/mod_proxy_http.so
 LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
 LoadModule proxy_connect_module modules/mod_proxy_connect.so
 LoadModule suexec_module modules/mod_suexec.so
-LoadModule cgi_module modules/mod_cgi.so
+LoadModule cgid_module modules/mod_cgid.so
 LoadModule version_module modules/mod_version.so
 LoadModule wsgi_module placeholder_so
 User apache
@@ -151,6 +151,7 @@ SSLRandomSeed startup file:/dev/urandom  256
 SSLRandomSeed connect builtin
 SSLCryptoDevice builtin
 TraceEnable Off
+ScriptSock /var/run/httpd/cgisock
 
 WSGISocketPrefix run/wsgi
 
