@@ -63,8 +63,10 @@ sed -i "s/\(.*\)$quotedtmpservername\(.*\)/\1$quotedservername\2/" $tomcatconfdi
 if grep -w 'release 7' /etc/redhat-release >/dev/null; then
 
 	templatefn=etc/httpd/conf/esgf-httpd.conf.7.tmpl
+	systemd=true
 else
 	templatefn=etc/httpd/conf/esgf-httpd.conf.6.tmpl
+	systemd=false
 fi
 
 sed "s/\(.*\)$quotedtmpservername\(.*\)/\1$quotedservername\2/" $templatefn >etc/httpd/conf/esgf-httpd.conf;
@@ -80,6 +82,7 @@ bash setup_python.sh "$esgfpython" "$esgfpip";
 cp etc/httpd/conf/esgf-httpd.conf /etc/httpd/conf/
 cp /etc/sysconfig/httpd /etc/sysconfig/httpd-`date +%Y%m%d`;
 cat etc/init.d/ldval >/etc/sysconfig/httpd
+${systemd} && sed -i 's/^export //' /etc/sysconfig/httpd
 #cp usr/local/tomcat/conf/server.xml /usr/local/tomcat/conf/
 mkdir -p /etc/certs
 mkdir -p /opt/esgf/flaskdemo/demo
